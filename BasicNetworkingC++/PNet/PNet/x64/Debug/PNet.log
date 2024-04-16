@@ -1,0 +1,6 @@
+﻿  Packet.cpp
+  Socket.cpp
+C:\Users\alonf\Desktop\c++\PNet\PNet\Packet.cpp(52,32): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\Users\alonf\Desktop\c++\PNet\PNet\Socket.cpp(126,56): warning C4267: 'argument': conversion from 'size_t' to 'u_short', possible loss of data
+C:\Users\alonf\Desktop\c++\PNet\PNet\Socket.cpp(133,60): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  PNet.vcxproj -> C:\Users\alonf\Desktop\c++\PNet\x64\Debug\PNet.lib

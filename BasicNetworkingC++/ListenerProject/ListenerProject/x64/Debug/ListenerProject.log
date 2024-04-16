@@ -1,0 +1,4 @@
+﻿  TcpListener.cpp
+C:\Users\alonf\Desktop\c++\ListenerProject\ListenerProject\TcpListener.cpp(17,45): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\alonf\Desktop\c++\ListenerProject\ListenerProject\TcpListener.cpp(61,29): warning C4244: 'argument': conversion from 'SOCKET' to 'int', possible loss of data
+  ListenerProject.vcxproj -> C:\Users\alonf\Desktop\c++\ListenerProject\x64\Debug\ListenerProject.exe

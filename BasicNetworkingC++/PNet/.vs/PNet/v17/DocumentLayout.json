@@ -1,0 +1,273 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\IncludeMe.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|solutionrelative:PNet\\IncludeMe.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\IPEndPoint.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|solutionrelative:PNet\\IPEndPoint.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Constants.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|solutionrelative:PNet\\Constants.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\SocketOption.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|solutionrelative:PNet\\SocketOption.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\SocketHandle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|solutionrelative:PNet\\SocketHandle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Socket.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|solutionrelative:PNet\\Socket.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\PResult.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|solutionrelative:PNet\\PResult.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\PacketType.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|solutionrelative:PNet\\PacketType.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\PacketExecption.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|solutionrelative:PNet\\PacketExecption.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Packet.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|solutionrelative:PNet\\Packet.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Network.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|solutionrelative:PNet\\Network.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6237BC0A-43A4-48B9-8A40-1803DDC27588}|Client\\Client.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\Client\\Source.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6237BC0A-43A4-48B9-8A40-1803DDC27588}|Client\\Client.vcxproj|solutionrelative:Client\\Source.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Packet.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|solutionrelative:PNet\\Packet.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F9E3FE3B-9B19-4C5B-99D3-36C779C09B85}|Server\\Server.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\Server\\Source.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F9E3FE3B-9B19-4C5B-99D3-36C779C09B85}|Server\\Server.vcxproj|solutionrelative:Server\\Source.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Socket.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ECA559F-F35F-4069-A3FE-B762C95AE91B}|PNet\\PNet.vcxproj|solutionrelative:PNet\\Socket.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "IPEndPoint.h",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\IPEndPoint.h",
+              "RelativeDocumentMoniker": "PNet\\IPEndPoint.h",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\IPEndPoint.h",
+              "RelativeToolTip": "PNet\\IPEndPoint.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-04-15T13:48:57.881Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "SocketOption.h",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\SocketOption.h",
+              "RelativeDocumentMoniker": "PNet\\SocketOption.h",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\SocketOption.h",
+              "RelativeToolTip": "PNet\\SocketOption.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-04-15T13:48:54.06Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "SocketHandle.h",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\SocketHandle.h",
+              "RelativeDocumentMoniker": "PNet\\SocketHandle.h",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\SocketHandle.h",
+              "RelativeToolTip": "PNet\\SocketHandle.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-04-15T13:48:53.018Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "PResult.h",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\PResult.h",
+              "RelativeDocumentMoniker": "PNet\\PResult.h",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\PResult.h",
+              "RelativeToolTip": "PNet\\PResult.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-04-15T13:48:46.676Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "PacketExecption.h",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\PacketExecption.h",
+              "RelativeDocumentMoniker": "PNet\\PacketExecption.h",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\PacketExecption.h",
+              "RelativeToolTip": "PNet\\PacketExecption.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-04-15T13:48:43.085Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Network.h",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Network.h",
+              "RelativeDocumentMoniker": "PNet\\Network.h",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Network.h",
+              "RelativeToolTip": "PNet\\Network.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-04-15T13:48:31.901Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "IncludeMe.h",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\IncludeMe.h",
+              "RelativeDocumentMoniker": "PNet\\IncludeMe.h",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\IncludeMe.h",
+              "RelativeToolTip": "PNet\\IncludeMe.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-04-15T13:48:24.664Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Constants.h",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Constants.h",
+              "RelativeDocumentMoniker": "PNet\\Constants.h",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Constants.h",
+              "RelativeToolTip": "PNet\\Constants.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-04-15T13:48:23.826Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Socket.h",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Socket.h",
+              "RelativeDocumentMoniker": "PNet\\Socket.h",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Socket.h",
+              "RelativeToolTip": "PNet\\Socket.h",
+              "ViewState": "AQIAABIAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-04-15T13:48:03.408Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Packet.h",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Packet.h",
+              "RelativeDocumentMoniker": "PNet\\Packet.h",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Packet.h",
+              "RelativeToolTip": "PNet\\Packet.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAOAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-04-08T14:43:51.504Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "PacketType.h",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\PacketType.h",
+              "RelativeDocumentMoniker": "PNet\\PacketType.h",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\PacketType.h",
+              "RelativeToolTip": "PNet\\PacketType.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-04-08T14:32:31.292Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Source.cpp",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\Client\\Source.cpp",
+              "RelativeDocumentMoniker": "Client\\Source.cpp",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\Client\\Source.cpp",
+              "RelativeToolTip": "Client\\Source.cpp",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAAACQAAAAGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-04-07T14:44:48.836Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Socket.cpp",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Socket.cpp",
+              "RelativeDocumentMoniker": "PNet\\Socket.cpp",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Socket.cpp",
+              "RelativeToolTip": "PNet\\Socket.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAALgAAAAdAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-04-07T16:31:51.515Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Packet.cpp",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Packet.cpp",
+              "RelativeDocumentMoniker": "PNet\\Packet.cpp",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\PNet\\Packet.cpp",
+              "RelativeToolTip": "PNet\\Packet.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAACAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-04-08T08:40:42.722Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Source.cpp",
+              "DocumentMoniker": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\Server\\Source.cpp",
+              "RelativeDocumentMoniker": "Server\\Source.cpp",
+              "ToolTip": "C:\\Users\\alonf\\Desktop\\c\u002B\u002B\\PNet\\Server\\Source.cpp",
+              "RelativeToolTip": "Server\\Source.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAEcAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-04-07T14:42:21.31Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
