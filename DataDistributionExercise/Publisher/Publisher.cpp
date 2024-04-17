@@ -96,7 +96,7 @@ void Publisher::sendScheduledTasks(int counter) {
     for (SubscriberShape& subscribers : subscribersList) {
         if (subscribers.checkUpdateTime(counter)) {
             
-            std::cout << subscribers.specificTypeList.size()<< std::endl;
+            //std::cout << subscribers.specificTypeList.size()<< std::endl;
 
             sendToSubscriber(subscribers);
         }
@@ -120,7 +120,7 @@ void Publisher::sendToSubscriber(SubscriberShape& subscriberShape) {
 
     for (const SendingInfo& sendingInfo : subscriberShape.specificTypeList) {
         
-        std::cout << "are we arrive to sendshapestring??" << std::endl;
+        //std::cout << "are we arrive to sendshapestring??" << std::endl;
 
         sendShapeString(shapeString, sendingInfo);
     }

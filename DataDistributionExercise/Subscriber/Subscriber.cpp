@@ -55,7 +55,7 @@ void Subscriber::receiveData() {
         char receiveData[1024];
         sockaddr_in senderAddress;
 
-        std::cout << "are we arrive to receive data?" << std::endl;
+        //std::cout << "are we arrive to receive data?" << std::endl;
 
 
         int senderAddressSize = sizeof(senderAddress);
@@ -94,6 +94,7 @@ void Subscriber::receiveData() {
 int main() {
     Subscriber subscriber("ExampleSubscriber");
     subscriber.subscribe(ShapeType::CIRCLE, "127.0.0.1", 11111); // Example subscription
+    subscriber.subscribe(ShapeType::SQUARE, "127.0.0.1", 11111); // Example subscription
     subscriber.receiveData(); // Start receiving data
 
     std::this_thread::sleep_for(std::chrono::seconds(50)); // Sleep for 10 seconds
