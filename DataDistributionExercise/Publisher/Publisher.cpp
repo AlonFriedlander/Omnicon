@@ -96,6 +96,7 @@ void Publisher::sendScheduledTasks(int counter) {
     for (SubscriberShape& subscribers : subscribersList) {
         if (subscribers.checkUpdateTime(counter)) {
             
+            std::cout << subscribers.specificTypeList.size()<< std::endl;
 
             sendToSubscriber(subscribers);
         }
@@ -113,11 +114,13 @@ void Publisher::sendToSubscriber(SubscriberShape& subscriberShape) {
         shapeString = generateCircleString(shape);
     }
 
-    std::cout << "are we arrive to sendshapestring??" << std::endl;
+    //std::cout << subscriberShape.specificTypeList.size()<< std::endl;
+
 
 
     for (const SendingInfo& sendingInfo : subscriberShape.specificTypeList) {
         
+        std::cout << "are we arrive to sendshapestring??" << std::endl;
 
         sendShapeString(shapeString, sendingInfo);
     }
@@ -189,14 +192,16 @@ void Publisher::subscriberRegistrar() {
         int bytesReceived = recvfrom(socketDescriptor, receiveData, 1024, 0, reinterpret_cast<sockaddr*>(&clientAddress), &clientAddressSize);
         if (bytesReceived != SOCKET_ERROR) {
             std::string message(receiveData, bytesReceived);
-            auto it = map.find(message);
-            if (it != map.end()) {
-                // Construct SendingInfo using appropriate conversion
-                SendingInfo sendingInfo(clientAddress, ntohs(clientAddress.sin_port));
-                it->second.specificTypeList.push_back(sendingInfo);
-
-                std::cout << "are we register someone?" << std::endl;
-
+            SendingInfo sendingInfo(clientAddress, ntohs(clientAddress.sin_port));
+            
+            // Iterate over subscribers to find matching shape type
+            for (SubscriberShape& subscriber : subscribersList) {
+                if (subscriber.shapeType == message) {
+                    subscriber.specificTypeList.push_back(sendingInfo);
+                    std::cout << "Registered subscriber for shape type: " << message << std::endl;
+                    std::cout << "Total subscribers for " << message << ": " << subscriber.specificTypeList.size() << std::endl;
+                    break; // Break the loop after finding the matching subscriber
+                }
             }
         }
     }
