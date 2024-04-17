@@ -1,0 +1,3 @@
+﻿  Client.cpp
+C:\Users\alonf\Desktop\Omnicon\BasicNetworkingC++\Server\Client\Client.cpp(43,48): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  Client.vcxproj -> C:\Users\alonf\Desktop\Omnicon\BasicNetworkingC++\Server\x64\Debug\Client.exe
