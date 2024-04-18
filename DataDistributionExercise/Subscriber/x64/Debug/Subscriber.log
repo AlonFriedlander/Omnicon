@@ -1,3 +1,3 @@
 ﻿  Subscriber.cpp
-C:\Users\alonf\Desktop\Omnicon\DataDistributionExercise\Subscriber\Subscriber.cpp(38,53): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  Subscriber.vcxproj -> C:\Users\alonf\Desktop\Omnicon\DataDistributionExercise\x64\Debug\Subscriber.exe
+C:\Users\alonf\Desktop\Omnicon\DataDistributionExercise\Subscriber\Subscriber.cpp(36,53): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  Subscriber.vcxproj -> C:\Users\alonf\Desktop\Omnicon\DataDistributionExercise\x64\Debug\Subscriber.lib

@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 
 #include <string>
 #include <iostream>
@@ -30,8 +29,8 @@ public:
 
 private:
     SOCKET socketDescriptor;
+
     std::string subscriberName;
 
-    //std::string shapeTypeToString(ShapeType shapeType);
     std::string shapeTypeToString(ShapeType shapeType);
 };

@@ -30,7 +30,7 @@ Publisher::Publisher(int port) : running(true) {
     }
 
     // Initialize map and list of subscribers
-    initializeMapAndList();
+    initializeList();
 }
 
 // Destructor
@@ -55,28 +55,27 @@ void Publisher::stopPublishing() {
 }
 
 // Internal: Initializes the map and list of subscribers
-void Publisher::initializeMapAndList() {
-    for (ShapeType shapeType : {ShapeType::SQUARE, ShapeType::CIRCLE}) {
+void Publisher::initializeList(){
+    for (ShapeEnum::ShapeType shapeType : ShapeEnum::AllTypes) {
         SubscriberShape subscriberShape(shapeTypeToString(shapeType), getFrequency(shapeType));
         subscribersList.push_back(subscriberShape);
-        map.insert(std::make_pair(shapeTypeToString(shapeType), subscriberShape));
     }
 }
 
 // Internal: Gets the frequency for a given shape type
-int Publisher::getFrequency(ShapeType shapeType) const {
+int Publisher::getFrequency(ShapeEnum::ShapeType shapeType) const {
     switch (shapeType) {
-    case ShapeType::SQUARE: return 2; // 2 Hz
-    case ShapeType::CIRCLE: return 3; // 3 Hz
+    case ShapeEnum::ShapeType::SQUARE: return 2; // 2 Hz
+    case ShapeEnum::ShapeType::CIRCLE: return 3; // 3 Hz
     default: return 0;
     }
 }
 
 // Internal: Converts ShapeType enum value to string
-std::string Publisher::shapeTypeToString(ShapeType shapeType) const {
+std::string Publisher::shapeTypeToString(ShapeEnum::ShapeType shapeType) const {
     switch (shapeType) {
-    case ShapeType::SQUARE: return "SQUARE";
-    case ShapeType::CIRCLE: return "CIRCLE";
+    case ShapeEnum::ShapeType::SQUARE: return "SQUARE";
+    case ShapeEnum::ShapeType::CIRCLE: return "CIRCLE";
     default: return "";
     }
 }
@@ -95,9 +94,6 @@ void Publisher::eventManager() {
 void Publisher::sendScheduledTasks(int counter) {
     for (SubscriberShape& subscribers : subscribersList) {
         if (subscribers.checkUpdateTime(counter)) {
-            
-            //std::cout << subscribers.specificTypeList.size()<< std::endl;
-
             sendToSubscriber(subscribers);
         }
     }
@@ -114,14 +110,7 @@ void Publisher::sendToSubscriber(SubscriberShape& subscriberShape) {
         shapeString = generateCircleString(shape);
     }
 
-    //std::cout << subscriberShape.specificTypeList.size()<< std::endl;
-
-
-
     for (const SendingInfo& sendingInfo : subscriberShape.specificTypeList) {
-        
-        //std::cout << "are we arrive to sendshapestring??" << std::endl;
-
         sendShapeString(shapeString, sendingInfo);
     }
     delete shape; // Remember to delete dynamically allocated shape
@@ -141,12 +130,6 @@ Shape* Publisher::generateShape(std::string& shapeType) {
         return new Circle(size, coordinates);
     }
 }
-
-//// Overload the << operator for Shape
-//std::ostream& operator<<(std::ostream& os, const Shape& shape) {
-//    shape.printProperties(os); // Assuming printProperties() prints the shape's properties to the output stream
-//    return os;
-//}
 
 // Internal: Sends a string representation of a shape to a subscriber
 void Publisher::sendShapeString(const std::string& shapeString, const SendingInfo& sendingInfo) {
@@ -200,7 +183,7 @@ void Publisher::subscriberRegistrar() {
                     subscriber.specificTypeList.push_back(sendingInfo);
                     std::cout << "Registered subscriber for shape type: " << message << std::endl;
                     std::cout << "Total subscribers for " << message << ": " << subscriber.specificTypeList.size() << std::endl;
-                    break; // Break the loop after finding the matching subscriber
+                    break; 
                 }
             }
         }

@@ -2,12 +2,6 @@
 
 #include "Shape.h"
 
-// Overload the << operator for Shape
-//std::ostream& operator<<(std::ostream& os, const Shape& shape) {
-//    shape.printProperties(os); // Assuming printProperties() prints the shape's properties to the output stream
-//    return os;
-//}
-
 Square::Square(int size, const std::vector<int>& coordinates) : size(size), coordinates(coordinates) {}
 
 void Square::printProperties(std::ostream& os) const {

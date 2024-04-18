@@ -24,11 +24,19 @@
 // Forward declarations
 class Shape;
 
-// Define ShapeType enum
-enum class ShapeType {
-    SQUARE = 2,
-    CIRCLE = 3
-};
+namespace ShapeEnum
+{
+    // Define ShapeType enum
+    enum class ShapeType {
+        SQUARE = 2,
+        CIRCLE = 3
+    };
+
+    // Define static array containing all shape types
+    static const ShapeType AllTypes[] = { ShapeType::SQUARE, ShapeType::CIRCLE };
+}
+
+
 
 // Define Publisher class
 class Publisher {
@@ -41,14 +49,13 @@ public:
 
 private:
     // Private member functions
-    void initializeMapAndList();
-    int getFrequency(ShapeType shapeType) const;
-    std::string shapeTypeToString(ShapeType shapeType) const;
+    void initializeList();
+    int getFrequency(ShapeEnum::ShapeType shapeType) const;
+    std::string shapeTypeToString(ShapeEnum::ShapeType shapeType) const;
     void eventManager();
     void sendScheduledTasks(int counter);
     void sendToSubscriber(SubscriberShape& subscribersShape);
     Shape* generateShape(std::string& shapeType);
-    void sendShape(const Shape* shape, const SendingInfo& sendingInfo);
     void sendShapeString(const std::string& shapeString, const SendingInfo& sendingInfo);
     void subscriberRegistrar();
     std::string generateSquareString(const Shape* shape);

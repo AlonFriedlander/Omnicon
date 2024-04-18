@@ -1,3 +1,7 @@
 ﻿  Publisher.cpp
-C:\Users\alonf\Desktop\Omnicon\DataDistributionExercise\Publisher\Publisher.cpp(153,69): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\alonf\Desktop\Omnicon\DataDistributionExercise\Publisher\Publisher.cpp(136,69): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  SendingInfo.cpp
+  Shape.cpp
+  SubscriberShape.cpp
+  Generating Code...
   Publisher.vcxproj -> C:\Users\alonf\Desktop\Omnicon\DataDistributionExercise\x64\Debug\Publisher.lib
