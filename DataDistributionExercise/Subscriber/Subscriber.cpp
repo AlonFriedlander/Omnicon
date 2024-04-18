@@ -13,6 +13,10 @@ Subscriber::Subscriber(const std::string& name) : subscriberName(name) {
         WSACleanup();
         throw std::runtime_error("Error creating socket");
     }
+
+    // Start the thread to receive data
+    std::thread receiveThread = std::thread(&Subscriber::receiveData, this);
+    receiveThread.detach();
 }
 
 Subscriber::~Subscriber() {
