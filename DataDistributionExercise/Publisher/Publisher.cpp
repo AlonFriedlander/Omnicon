@@ -15,7 +15,7 @@ Publisher::Publisher() : running(true) {
 
     createSockets();
 
-    // Initialize map and list of subscribers
+    // Initialize list of subscribers
     initializeList();
 }
 
@@ -93,7 +93,7 @@ void Publisher::stopPublishing() {
     closesocket(unicastSocket);
 }
 
-// Internal: Initializes the map and list of subscribers
+// Internal: Initializes the list of subscribers
 void Publisher::initializeList(){
     for (ShapeEnum::ShapeType shapeType : ShapeEnum::AllTypes) {
         SubscriberShape subscriberShape(shapeTypeToString(shapeType), getFrequency(shapeType));
@@ -157,7 +157,7 @@ void Publisher::sendToSubscriber(SubscriberShape& subscriberShape) {
 
 
 
-// Internal: Generates a random shape based on the given shape type
+// Generates a random shape based on the given shape type
 Shape* Publisher::generateShape(std::string& shapeType) {
     int size = (rand() % 100) + 1; // Random size between 1 and 100
     std::vector<int> coordinates(3);
@@ -172,13 +172,13 @@ Shape* Publisher::generateShape(std::string& shapeType) {
     }
 }
 
-// Internal: Sends a string representation of a shape to a subscriber
+//Sends a string representation of a shape to a subscriber
 void Publisher::sendShapeString(const std::string& shapeString, const SendingInfo& sendingInfo) {
     const sockaddr_in& addr = sendingInfo.getAddress();
     sendto(unicastSocket, shapeString.c_str(), shapeString.length(), 0, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
 }
 
-// Internal: Generates a string representation of a square
+// Generates a string representation of a square
 std::string Publisher::generateSquareString(const Shape* shape) {
     std::stringstream ss;
     const Square* square = dynamic_cast<const Square*>(shape);
@@ -193,7 +193,7 @@ std::string Publisher::generateSquareString(const Shape* shape) {
     return ss.str();
 }
 
-// Internal: Generates a string representation of a circle
+//Generates a string representation of a circle
 std::string Publisher::generateCircleString(const Shape* shape) {
     std::stringstream ss;
     const Circle* circle = dynamic_cast<const Circle*>(shape);

@@ -132,7 +132,7 @@ void Subscriber::subscribe(ShapeType shapeType, const std::string& publisherAddr
             WSACleanup();
         }
 
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(4));
     }
 }
 
@@ -156,9 +156,7 @@ void Subscriber::registerToPublisher() {
 
     // Loop until registration is successful
     while (flag) {
-        std::cout << "subscriber: try recv" << std::endl;
         int bytesReceived = recvfrom(recvSocketDescriptor, receiveData, sizeof(receiveData), 0, reinterpret_cast<sockaddr*>(&senderAddress), &senderAddressSize);
-        std::cout << "subscriber: recv" << std::endl;
 
         if (bytesReceived != SOCKET_ERROR) {
             // Print the received data
@@ -173,7 +171,6 @@ void Subscriber::registerToPublisher() {
         }
     }
 }
-
 
 void Subscriber::receiveUnicastData() {
     char receiveData[1024];

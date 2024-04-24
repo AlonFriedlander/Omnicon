@@ -14,12 +14,6 @@
 #pragma comment(lib, "Ws2_32.lib") // Link against Ws2_32.lib
 
 
-
-enum class ShapeType {
-    CIRCLE,
-    SQUARE
-};
-
 class Subscriber {
 public:
     enum class ShapeType {
