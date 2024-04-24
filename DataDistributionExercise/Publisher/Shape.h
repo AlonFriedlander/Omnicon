@@ -8,14 +8,12 @@
 
 class Shape {
 public:
-    virtual void printProperties(std::ostream& os) const = 0; // Updated to take ostream reference
-    virtual ~Shape() = default; // Virtual destructor for polymorphism
+    virtual ~Shape() = default; 
 };
 
 class Square : public Shape {
 public:
     Square(int size, const std::vector<int>& coordinates);
-    void printProperties(std::ostream& os) const override; // Updated to override the base class function
     int getSize() const { return size; } // Getter for size
     const std::vector<int>& getCoordinates() const { return coordinates; }
 
@@ -27,7 +25,6 @@ private:
 class Circle : public Shape {
 public:
     Circle(int size, const std::vector<int>& coordinates);
-    void printProperties(std::ostream& os) const override; // Updated to override the base class function
     int getSize() const { return size; } // Getter for size
     const std::vector<int>& getCoordinates() const { return coordinates; }
 

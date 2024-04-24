@@ -1,15 +1,14 @@
 #pragma once
 
 #include <WinSock2.h> // For sockaddr_in
+#include <WS2tcpip.h>
+#pragma comment (lib, "ws2_32.lib")
+
 
 class SendingInfo {
 public:
-    SendingInfo(const sockaddr_in& address, int port);
-
-    // Getter functions for address and port
+    SendingInfo(int port);
     const sockaddr_in& getAddress() const;
-    int getPort() const;
-
+private:
     sockaddr_in address;
-    int port;
 };

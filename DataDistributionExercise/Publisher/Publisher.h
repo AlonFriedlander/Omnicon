@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <map>
 #include <thread>
+#include <memory>
 #include <chrono>
 #include <stdexcept>
 #include "Shape.h"
@@ -37,11 +38,10 @@ namespace ShapeEnum
 }
 
 
-
 // Define Publisher class
 class Publisher {
 public:
-    Publisher(int port);
+    Publisher();
     ~Publisher();
 
     void startPublishing();
@@ -55,15 +55,19 @@ private:
     void eventManager();
     void sendScheduledTasks(int counter);
     void sendToSubscriber(SubscriberShape& subscribersShape);
-    Shape* generateShape(std::string& shapeType);
+    Shape* generateShape(std::string& shapeType); 
     void sendShapeString(const std::string& shapeString, const SendingInfo& sendingInfo);
     void subscriberRegistrar();
-    std::string generateSquareString(const Shape* shape);
-    std::string generateCircleString(const Shape* shape);
+    std::string generateSquareString(const Shape* shape); 
+    std::string generateCircleString(const Shape* shape); 
+
+    void createSockets();
 
     // Private data members
     bool running;
-    SOCKET socketDescriptor;
+    SOCKET multicastSocket;
+    SOCKET unicastSocket;
+    sockaddr_in multicastSendingAddr;
     std::vector<SubscriberShape> subscribersList;
     std::map<std::string, SubscriberShape> map;
 };

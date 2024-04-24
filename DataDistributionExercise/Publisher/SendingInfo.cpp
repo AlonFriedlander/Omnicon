@@ -1,12 +1,13 @@
 #include "SendingInfo.h"
 
-SendingInfo::SendingInfo(const sockaddr_in& address, int port)
-    : address(address), port(port) {}
+SendingInfo::SendingInfo(int port) {
+    memset(&address, 0, sizeof(address));
+    address.sin_family = AF_INET;
+    address.sin_port = htons(port);
+    inet_pton(AF_INET, "127.0.0.1", &address.sin_addr); // Convert from string to byte array
+    //address.sin_addr.s_addr = htonl(INADDR_ANY);
+}
 
 const sockaddr_in& SendingInfo::getAddress() const {
     return address;
-}
-
-int SendingInfo::getPort() const {
-    return port;
 }

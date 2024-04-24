@@ -1,14 +1,14 @@
 #include <iostream>
-#include "Publisher\Publisher.h" // Include the header file for your Publisher class
+#include "Publisher\Publisher.h" 
 
 int main() {
     const int PUB_PORT = 22222;
-    Publisher publisher(PUB_PORT); // Create a Publisher object with the specified port
-    publisher.startPublishing(); // Start publishing shapes to subscribers
+    Publisher publisher;
+    publisher.startPublishing(); 
 
-    std::this_thread::sleep_for(std::chrono::seconds(1000)); // Sleep for 10 seconds
+    std::this_thread::sleep_for(std::chrono::seconds(1000));
 
-    //publisher.stopPublishing(); // Stop the publishing process
+    publisher.stopPublishing(); 
 
-    return 0; // Return success
+    return 0; 
 }

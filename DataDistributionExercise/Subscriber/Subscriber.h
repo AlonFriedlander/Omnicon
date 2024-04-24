@@ -22,15 +22,27 @@ enum class ShapeType {
 
 class Subscriber {
 public:
-    Subscriber(const std::string& name);
+    enum class ShapeType {
+        CIRCLE,
+        SQUARE
+    };
+
+    Subscriber(const std::string& name, int portNum);
     ~Subscriber();
-    void subscribe(ShapeType shapeType, const std::string& publisherAddress, int publisherPort);
-    void receiveData();
+
+    void subscribe(ShapeType shapeType, const std::string& publisherAddress);
 
 private:
-    SOCKET socketDescriptor;
-
+    SOCKET sendSocketDescriptor;
+    SOCKET recvSocketDescriptor;
+    SOCKET unicastSocket;
     std::string subscriberName;
+    int portNumber;
+    bool flag = true;
+    sockaddr_in multicastSendingAddr;
 
+    void registerToPublisher();
+    void receiveUnicastData();
     std::string shapeTypeToString(ShapeType shapeType);
+    void createSockets();
 };

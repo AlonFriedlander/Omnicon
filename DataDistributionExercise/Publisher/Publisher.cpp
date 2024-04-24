@@ -1,33 +1,19 @@
 #include "Publisher.h"
 
+std::string multicastReceivingGroup = "234.5.6.7";
+std::string multicastSendingGroup = "234.5.6.8";
+int multicastReceivingPort = 8910;
+int multicastSendingPort = 8911; 
+
 // Constructor
-Publisher::Publisher(int port) : running(true) {
+Publisher::Publisher() : running(true) {
     // Initialize Winsock
-    std::cout << "publisher ctor" << std::endl;
     WSADATA data;
     if (WSAStartup(MAKEWORD(2, 2), &data) != 0) {
         throw std::runtime_error("Error initializing Winsock");
     }
 
-    // Create UDP socket
-    if ((socketDescriptor = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
-        WSACleanup();
-        throw std::runtime_error("Error creating socket");
-    }
-
-    // Initialize server address
-    sockaddr_in serverAddress;
-    std::memset(&serverAddress, 0, sizeof(serverAddress));
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_addr.s_addr = INADDR_ANY;
-    serverAddress.sin_port = htons(port);
-
-    // Bind the socket to the specified port
-    if (bind(socketDescriptor, reinterpret_cast<const sockaddr*>(&serverAddress), sizeof(serverAddress)) == SOCKET_ERROR) {
-        closesocket(socketDescriptor);
-        WSACleanup();
-        throw std::runtime_error("Error binding socket");
-    }
+    createSockets();
 
     // Initialize map and list of subscribers
     initializeList();
@@ -37,6 +23,58 @@ Publisher::Publisher(int port) : running(true) {
 Publisher::~Publisher() {
     stopPublishing();
     WSACleanup();
+}
+
+void Publisher::createSockets() {
+    // Create UDP socket
+    if ((multicastSocket = WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0)) == INVALID_SOCKET) {
+        WSACleanup();
+        throw std::runtime_error("Error creating socket");
+    }
+
+    // Allow multiple sockets to use the same PORT number
+    int yes = 1;
+    if (setsockopt(multicastSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&yes), sizeof(yes)) == SOCKET_ERROR) {
+        closesocket(multicastSocket);
+        WSACleanup();
+        throw std::runtime_error("Error setting socket options");
+    }
+
+    multicastSendingAddr;
+    memset(&multicastSendingAddr, 0, sizeof(multicastSendingAddr));
+    multicastSendingAddr.sin_family = AF_INET;
+    inet_pton(AF_INET, (PCSTR)(multicastSendingGroup.c_str()), &multicastSendingAddr.sin_addr.s_addr);
+    multicastSendingAddr.sin_port = htons(multicastSendingPort);
+
+    // Set up the address structure for binding
+    sockaddr_in serverAddress;
+    memset(&serverAddress, 0, sizeof(serverAddress));
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
+    serverAddress.sin_port = htons(multicastReceivingPort);
+
+    // Bind the socket to the specified port
+    if (bind(multicastSocket, reinterpret_cast<const sockaddr*>(&serverAddress), sizeof(serverAddress)) == SOCKET_ERROR) {
+        closesocket(multicastSocket);
+        WSACleanup();
+        throw std::runtime_error("Error binding socket");
+    }
+
+     // Join the multicast group
+    ip_mreq multicastRequest;
+    inet_pton(AF_INET, (PCSTR)(multicastReceivingGroup.c_str()), &multicastRequest.imr_multiaddr.s_addr);
+    multicastRequest.imr_interface.s_addr = htonl(INADDR_ANY);
+    if (setsockopt(multicastSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, reinterpret_cast<const char*>(&multicastRequest), sizeof(multicastRequest)) == SOCKET_ERROR) {
+        closesocket(multicastSocket);
+        WSACleanup();
+        throw std::runtime_error("Error joining multicast group");
+    }
+
+    // Create UDP socket
+    if ((unicastSocket = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
+        WSACleanup();
+        throw std::runtime_error("Error creating socket");
+    }
 }
 
 // Starts the publishing process
@@ -51,7 +89,8 @@ void Publisher::startPublishing() {
 // Stops the publishing process
 void Publisher::stopPublishing() {
     running = false;
-    closesocket(socketDescriptor);
+    closesocket(multicastSocket);
+    closesocket(unicastSocket);
 }
 
 // Internal: Initializes the map and list of subscribers
@@ -62,7 +101,7 @@ void Publisher::initializeList(){
     }
 }
 
-// Internal: Gets the frequency for a given shape type
+//Gets the frequency for a given shape type
 int Publisher::getFrequency(ShapeEnum::ShapeType shapeType) const {
     switch (shapeType) {
     case ShapeEnum::ShapeType::SQUARE: return 2; // 2 Hz
@@ -71,7 +110,7 @@ int Publisher::getFrequency(ShapeEnum::ShapeType shapeType) const {
     }
 }
 
-// Internal: Converts ShapeType enum value to string
+//Converts ShapeType enum value to string
 std::string Publisher::shapeTypeToString(ShapeEnum::ShapeType shapeType) const {
     switch (shapeType) {
     case ShapeEnum::ShapeType::SQUARE: return "SQUARE";
@@ -80,29 +119,29 @@ std::string Publisher::shapeTypeToString(ShapeEnum::ShapeType shapeType) const {
     }
 }
 
-// Internal: Manages the scheduling and sending shapes to subscribers
+//Manages the scheduling and sending shapes to subscribers
 void Publisher::eventManager() {
     int counter = 0;
     while (running) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Sleep for 100 milliseconds
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Sleep for 0.1 seconds
         ++counter;
         sendScheduledTasks(counter);
     }
 }
 
-// Internal: Sends shapes to subscribers based on the counter value and frequency
+//Sends shapes to subscribers based on the counter value and frequency
 void Publisher::sendScheduledTasks(int counter) {
-    for (SubscriberShape& subscribers : subscribersList) {
+    for (auto &subscribers : subscribersList) {
         if (subscribers.checkUpdateTime(counter)) {
             sendToSubscriber(subscribers);
         }
     }
 }
 
-// Internal: Sends a shape to a subscriber
+//Sends a shape string to a subscriber
 void Publisher::sendToSubscriber(SubscriberShape& subscriberShape) {
     std::string shapeString;
-    Shape *shape = generateShape(subscriberShape.shapeType);
+    Shape* shape = generateShape(subscriberShape.shapeType);
     if (subscriberShape.shapeType == "SQUARE") {
         shapeString = generateSquareString(shape);
     }
@@ -116,9 +155,11 @@ void Publisher::sendToSubscriber(SubscriberShape& subscriberShape) {
     delete shape; // Remember to delete dynamically allocated shape
 }
 
+
+
 // Internal: Generates a random shape based on the given shape type
 Shape* Publisher::generateShape(std::string& shapeType) {
-    int size = rand() % 101; // Random size between 1 and 100
+    int size = (rand() % 100) + 1; // Random size between 1 and 100
     std::vector<int> coordinates(3);
     for (int i = 0; i < 3; ++i) {
         coordinates[i] = rand() % 1500; // Random coordinate
@@ -133,7 +174,8 @@ Shape* Publisher::generateShape(std::string& shapeType) {
 
 // Internal: Sends a string representation of a shape to a subscriber
 void Publisher::sendShapeString(const std::string& shapeString, const SendingInfo& sendingInfo) {
-    sendto(socketDescriptor, shapeString.c_str(), shapeString.length(), 0, reinterpret_cast<const sockaddr*>(&sendingInfo.address), sizeof(sendingInfo.address));
+    const sockaddr_in& addr = sendingInfo.getAddress();
+    sendto(unicastSocket, shapeString.c_str(), shapeString.length(), 0, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
 }
 
 // Internal: Generates a string representation of a square
@@ -166,26 +208,53 @@ std::string Publisher::generateCircleString(const Shape* shape) {
     return ss.str();
 }
 
-// Internal: Listens for new subscribers and manages their subscription
+
+//Listens for new subscribers and manages their subscription
 void Publisher::subscriberRegistrar() {
+    char receiveData[1024];
+    sockaddr_in clientAddress;
+    int clientAddressSize = sizeof(clientAddress);
+    std::string delimiter = ":";
+
     while (running) {
-        char receiveData[1024];
-        sockaddr_in clientAddress;
-        int clientAddressSize = sizeof(clientAddress);
-        int bytesReceived = recvfrom(socketDescriptor, receiveData, 1024, 0, reinterpret_cast<sockaddr*>(&clientAddress), &clientAddressSize);
+        int bytesReceived = recvfrom(multicastSocket, receiveData, 1024, 0, reinterpret_cast<sockaddr*>(&clientAddress), &clientAddressSize);
+
         if (bytesReceived != SOCKET_ERROR) {
             std::string message(receiveData, bytesReceived);
-            SendingInfo sendingInfo(clientAddress, ntohs(clientAddress.sin_port));
-            
+
+            // Extract shape type and port number from the message "SHAPE_TYPE:PORT_NUMBER"
+            size_t pos = message.find(delimiter);
+            std::string shapeMsg = message.substr(0, pos);
+            int portMsg = std::stoi(message.substr(pos + delimiter.length()));
+
+            SendingInfo sendingInfo(portMsg);
+
             // Iterate over subscribers to find matching shape type
             for (SubscriberShape& subscriber : subscribersList) {
-                if (subscriber.shapeType == message) {
+                if (subscriber.shapeType == shapeMsg) {
+                    // Sending approval message
+                    sendto(multicastSocket, "approved", strlen("approved"), 0, reinterpret_cast<const sockaddr*>(&multicastSendingAddr), sizeof(multicastSendingAddr));
+
                     subscriber.specificTypeList.push_back(sendingInfo);
-                    std::cout << "Registered subscriber for shape type: " << message << std::endl;
-                    std::cout << "Total subscribers for " << message << ": " << subscriber.specificTypeList.size() << std::endl;
-                    break; 
+
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+                    std::cout << "Registered subscriber for shape type: " << shapeMsg << std::endl;
+                    std::cout << "Total subscribers for " << shapeMsg << ": " << subscriber.specificTypeList.size() << std::endl;
+                    break;
                 }
             }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
