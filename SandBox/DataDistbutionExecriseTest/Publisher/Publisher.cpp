@@ -7,9 +7,6 @@ int multicastSendingPort = 8911;
 
 // Constructor
 Publisher::Publisher() : running(true) {
-    addition(5, 3);
-
-
     // Initialize Winsock
     WSADATA data;
     if (WSAStartup(MAKEWORD(2, 2), &data) != 0) {
@@ -17,6 +14,11 @@ Publisher::Publisher() : running(true) {
     }
 
     createSockets();
+
+    functionMap["size"] = std::bind(&Publisher::generateSize, this);
+    functionMap["coordinates"] = std::bind(&Publisher::generateCoordinates, this);
+    functionMap["colors"] = std::bind(&Publisher::generateColors, this);
+
 
     // Initialize list of subscribers
     initializeList();
@@ -102,11 +104,18 @@ void Publisher::stopPublishing() {
     closesocket(unicastSocket);
 }
 
+
 // Internal: Initializes the list of subscribers
 void Publisher::initializeList() {
     for (ShapeEnum::ShapeType shapeType : ShapeEnum::AllTypes) {
-        SubscriberShape subscriberShape(shapeTypeToString(shapeType), getFrequency(shapeType));
-        subscribersList.push_back(subscriberShape);
+        // Create a subscriber shape object
+        SubscriberShapePtr subscriberShapePtr = std::make_shared<SubscriberShape>(shapeTypeToString(shapeType), getFrequency(shapeType));
+
+        // Add the subscriber shape object to the list
+        subscribersList.push_back(subscriberShapePtr);
+
+        // Insert a pointer to the subscriber shape object into the map
+        map.insert(std::make_pair(shapeTypeToString(shapeType), subscriberShapePtr));
     }
 }
 
@@ -128,42 +137,139 @@ std::string Publisher::shapeTypeToString(ShapeEnum::ShapeType shapeType) const {
     }
 }
 
-//Manages the scheduling and sending shapes to subscribers
 void Publisher::eventManager() {
-    int counter = 0;
+    // Create a thread for handling circles
+    std::thread circleThread(&Publisher::circleHandler, this);
+    // Create a thread for handling squares
+    std::thread squareThread(&Publisher::squareHandler, this);
+
+     circleThread.join();
+     squareThread.join();
+}
+
+// Function to handle circles
+void Publisher::circleHandler() {
+    // Create a JSON object
+    nlohmann::json circleJson;
+
+    // Add the shapeType field
+    circleJson["shapeType"] = "Circle";
+
     while (running) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Sleep for 0.1 seconds
-        ++counter;
-        sendScheduledTasks(counter);
+        for (const auto& entry : functionMap) {
+            circleJson[entry.first] = entry.second();// Call the function and store the result in JSON
+        }
+        
+        std::string jsonString = circleJson.dump();
+
+        auto i = map.find("CIRCLE");
+        SubscriberShapePtr subscriberShapePtr = i->second;
+
+        for (const SendingInfo& sendingInfo : subscriberShapePtr->specificTypeList) {
+            sendShapeString(jsonString, sendingInfo);
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(333)); // Sleep for 0.333 seconds
     }
 }
 
-//Sends shapes to subscribers based on the counter value and frequency
-void Publisher::sendScheduledTasks(int counter) {
-    for (auto& subscribers : subscribersList) {
-        if (subscribers.checkUpdateTime(counter)) {
-            sendToSubscriber(subscribers);
+// Function to handle squares
+void Publisher::squareHandler() {
+    // Create a JSON object
+    nlohmann::json squareJson;
+
+    // Add the shapeType field
+    squareJson["shapeType"] = "Square";
+
+    while (running) {
+        for (const auto& entry : functionMap) {
+            squareJson[entry.first] = entry.second();// Call the function and store the result in JSON
         }
+
+        std::string jsonString = squareJson.dump();
+
+        auto i = map.find("SQUARE");
+        SubscriberShapePtr subscriberShapePtr = i->second;
+
+        for (const SendingInfo& sendingInfo : subscriberShapePtr->specificTypeList) {
+            sendShapeString(jsonString, sendingInfo);
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Sleep for 0.5 seconds
     }
 }
+
+
+//// Function to generate JSON for shape properties
+//void Publisher::generateShapeJson(nlohmann::json& shapeJson) {
+//    for (const auto& entry : functionMap) {
+//        auto i = entry.second();
+//        shapeJson[entry.first] = i // Call the function and store the result in JSON
+//    }
+//}
+
+////Manages the scheduling and sending shapes to subscribers
+//void Publisher::eventManager() {
+//    int counter = 0;
+//    while (running) {
+//        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Sleep for 0.1 seconds
+//        ++counter;
+//        sendScheduledTasks(counter);
+//    }
+//}
+//
+//void Publisher::sendScheduledTasks(int counter) {
+//    for (auto& subscriberPtr : subscribersList) {
+//        auto& subscriber = *subscriberPtr; // Dereference the shared pointer to get the SubscriberShape object
+//
+//        if (subscriber.checkUpdateTime(counter)) {
+//            sendToSubscriber(subscriber);
+//        }
+//    }
+//}
 
 //Sends a shape string to a subscriber
-void Publisher::sendToSubscriber(SubscriberShape& subscriberShape) {
-    std::string shapeString;
-    Shape* shape = generateShape(subscriberShape.shapeType);
-    if (subscriberShape.shapeType == "SQUARE") {
-        shapeString = generateSquareString(shape);
-    }
-    else {
-        shapeString = generateCircleString(shape);
-    }
+//void Publisher::sendToSubscriber(SubscriberShape& subscriberShape) {
+//    std::string shapeString;
+//    Shape* shape = generateShape(subscriberShape.shapeType);
+//    if (subscriberShape.shapeType == "SQUARE") {
+//        shapeString = generateSquareString(shape);
+//    }
+//    else {
+//        shapeString = generateCircleString(shape);
+//    }
+//
+//    for (const SendingInfo& sendingInfo : subscriberShape.specificTypeList) {
+//        sendShapeString(shapeString, sendingInfo);
+//    }
+//    delete shape; // Remember to delete dynamically allocated shape
+//}
 
-    for (const SendingInfo& sendingInfo : subscriberShape.specificTypeList) {
-        sendShapeString(shapeString, sendingInfo);
-    }
-    delete shape; // Remember to delete dynamically allocated shape
+// Generates a random size for the shape and returns it as a string
+std::string Publisher::generateSize() {
+    int size = (rand() % 100) + 1; // Random size between 1 and 100
+    return std::to_string(size);
 }
 
+// Generates random coordinates for the shape and returns them as a string
+std::string Publisher::generateCoordinates() {
+    std::vector<int> coordinates(3);
+    for (int i = 0; i < 3; ++i) {
+        coordinates[i] = rand() % 1500; // Random coordinate
+    }
+    // Convert coordinates to string format
+    std::string coordinatesString = "[" + std::to_string(coordinates[0]) + ", " +
+        std::to_string(coordinates[1]) + ", " +
+        std::to_string(coordinates[2]) + "]";
+    return coordinatesString;
+}
+
+// Generates random colors for the shape and returns a string
+std::string Publisher::generateColors() {
+    std::vector<std::string> colors = { "Red", "Blue", "Green", "Yellow", "Purple" };
+    int randomIndex = rand() % colors.size(); // Generate a random index within the range of colors vector
+    return colors[randomIndex]; // Return the color at the random index
+}
 
 
 // Generates a random shape based on the given shape type
@@ -187,35 +293,35 @@ void Publisher::sendShapeString(const std::string& shapeString, const SendingInf
     sendto(unicastSocket, shapeString.c_str(), shapeString.length(), 0, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
 }
 
-// Generates a string representation of a square
-std::string Publisher::generateSquareString(const Shape* shape) {
-    std::stringstream ss;
-    const Square* square = dynamic_cast<const Square*>(shape);
-    if (square) {
-        ss << "Square - Color: blue, Size: " << square->getSize() << ", Coordinates: ";
-        const std::vector<int>& coordinates = square->getCoordinates();
-        for (int coord : coordinates) {
-            ss << coord << " ";
-        }
-        ss << std::endl;
-    }
-    return ss.str();
-}
-
-//Generates a string representation of a circle
-std::string Publisher::generateCircleString(const Shape* shape) {
-    std::stringstream ss;
-    const Circle* circle = dynamic_cast<const Circle*>(shape);
-    if (circle) {
-        ss << "Circle - Color: green, Size: " << circle->getSize() << ", Coordinates: ";
-        const std::vector<int>& coordinates = circle->getCoordinates();
-        for (int coord : coordinates) {
-            ss << coord << " ";
-        }
-        ss << std::endl;
-    }
-    return ss.str();
-}
+//// Generates a string representation of a square
+//std::string Publisher::generateSquareString(const Shape* shape) {
+//    std::stringstream ss;
+//    const Square* square = dynamic_cast<const Square*>(shape);
+//    if (square) {
+//        ss << "Square - Color: blue, Size: " << square->getSize() << ", Coordinates: ";
+//        const std::vector<int>& coordinates = square->getCoordinates();
+//        for (int coord : coordinates) {
+//            ss << coord << " ";
+//        }
+//        ss << std::endl;
+//    }
+//    return ss.str();
+//}
+//
+////Generates a string representation of a circle
+//std::string Publisher::generateCircleString(const Shape* shape) {
+//    std::stringstream ss;
+//    const Circle* circle = dynamic_cast<const Circle*>(shape);
+//    if (circle) {
+//        ss << "Circle - Color: green, Size: " << circle->getSize() << ", Coordinates: ";
+//        const std::vector<int>& coordinates = circle->getCoordinates();
+//        for (int coord : coordinates) {
+//            ss << coord << " ";
+//        }
+//        ss << std::endl;
+//    }
+//    return ss.str();
+//}
 
 
 //Listens for new subscribers and manages their subscription
@@ -229,37 +335,35 @@ void Publisher::subscriberRegistrar() {
         int bytesReceived = recvfrom(multicastSocket, receiveData, 1024, 0, reinterpret_cast<sockaddr*>(&clientAddress), &clientAddressSize);
 
         if (bytesReceived != SOCKET_ERROR) {
-            std::string message(receiveData, bytesReceived);
+            std::string jsonStr(receiveData, bytesReceived);
+            auto jsonData = nlohmann::json::parse(jsonStr);
 
-            // Extract shape type and port number from the message "SHAPE_TYPE:PORT_NUMBER"
-            size_t pos = message.find(delimiter);
-            std::string shapeMsg = message.substr(0, pos);
-            int portMsg = std::stoi(message.substr(pos + delimiter.length()));
+            int portNumber = jsonData["portNumber"];
 
-            SendingInfo sendingInfo(portMsg);
-            
-            sockaddr_in address;
-            memset(&address, 0, sizeof(address));
-            address.sin_family = AF_INET;
-            address.sin_port = htons(portMsg + 1);
-            inet_pton(AF_INET, "127.0.0.1", &address.sin_addr);
+            if (registeredPortNumbers.count(portNumber)) {
+                continue;
+            }
 
-            // Iterate over subscribers to find matching shape type
-            for (SubscriberShape& subscriber : subscribersList) {
-                if (subscriber.shapeType == shapeMsg) {
-                    // Sending approval message
-                    //sendto(multicastSocket, "approved", strlen("approved"), 0, reinterpret_cast<const sockaddr*>(&multicastSendingAddr), sizeof(multicastSendingAddr));
-                    //const sockaddr_in& addr = sendingInfo.getAddress();
+            // Register the port number
+            registeredPortNumbers.insert(portNumber);
 
-                    sendto(sendApprovedSocket, "approved", strlen("approved"), 0, reinterpret_cast<const sockaddr*>(&address), sizeof(address));
+            //Create SendingInfo
+            SendingInfo sendingInfo(portNumber);
 
-                    subscriber.specificTypeList.push_back(sendingInfo);
+            //Iterate over shape types and update SubscriberShape
+            for (const auto& shapeType : jsonData["shapeTypes"]) {
+                // Update subscriber shape in the map
+                if (map.count(shapeType)) {
+                    auto it = map.find(shapeType);
+                    SubscriberShapePtr subscriberShapePtr = it->second;
+                    subscriberShapePtr->specificTypeList.push_back(sendingInfo);
 
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
-
-                    std::cout << "Registered subscriber for shape type: " << shapeMsg << std::endl;
-                    std::cout << "Total subscribers for " << shapeMsg << ": " << subscriber.specificTypeList.size() << std::endl;
-                    break;
+                    std::cout << "Registered subscriber for shape type: " << shapeType << std::endl;
+                    std::cout << "Total subscribers for " << shapeType << ": " << subscriberShapePtr->specificTypeList.size() << std::endl;
+                }
+                else {
+                    // Handle case when shape type is not found in map
+                    // For example, log an error or ignore it
                 }
             }
         }

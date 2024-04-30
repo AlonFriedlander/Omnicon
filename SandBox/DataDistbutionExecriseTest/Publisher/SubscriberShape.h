@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <set>
 #include <vector>
 #include <cmath> // Include cmath for floor function
 #include "SendingInfo.h" 
@@ -17,6 +18,7 @@ public:
     std::string shapeType;
     double frequency;
     std::vector<SendingInfo> specificTypeList;
+    //std::set<SendingInfo> specificTypeSet; // Change from vector to set
 
     double convertFrequency(int frequencyInHZ);
 };

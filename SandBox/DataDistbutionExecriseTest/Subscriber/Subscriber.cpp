@@ -1,14 +1,18 @@
 #include "Subscriber.h"
 
 std::string multicastSendingGroup = "234.5.6.7";
-std::string multicastReceivingGroup = "234.5.6.8";
 int multicastSendingPort = 8910;
-int multicastReceivingPort = 8911;
 
-Subscriber::Subscriber(const std::string& name, int portNum)
-    : subscriberName(name), portNumber(portNum) {
+Subscriber::Subscriber(const std::vector<std::string>& args){
 
-    addition(5, 3);
+    subscriberName = args[0];
+    portNumber = std::stoi(args[1]);
+    
+    // Parse shape types
+    parseShapes(args[2]);
+    
+    // Create attribute list
+    createAttributes(args);
 
     // Initialize Winsock
     WSADATA data;
@@ -18,7 +22,10 @@ Subscriber::Subscriber(const std::string& name, int portNum)
 
     createSockets();
 
-    std::thread receiveThread2(&Subscriber::receiveUnicastData, this);
+    std::thread receiveThread(&Subscriber::receiveUnicastData, this);
+    receiveThread.detach();
+    
+    std::thread receiveThread2(&Subscriber::registerToPublisher, this);
     receiveThread2.detach();
 }
 
@@ -132,20 +139,72 @@ void Subscriber::createSockets() {
     }
 }
 
-void Subscriber::subscribe(ShapeType shapeType, const std::string& publisherAddress) {
-    flag = true;
+void Subscriber::parseShapes(const std::string& shapeType) {
+    std::string shape;
+    for (char c : shapeType) {
+        if (c == ':') {
+            // Add extracted shape to the set
+            subscribedShapes.insert(shape);
+            shape.clear();
+        }
+        else {
+            shape.push_back(c);
+        }
+    }
+    // Add the last shape to the set
+    subscribedShapes.insert(shape);
+}
 
-    // Start the thread to receive data
-    std::thread receiveThread(&Subscriber::registerToPublisher, this);
-    receiveThread.detach();
+void Subscriber::createAttributes(const std::vector<std::string>& args) {
+    for (size_t i = 3; i < args.size(); ++i) {
+        attributes.push_back(args[i]);
+    }
+}
 
-    // Create the message string in the format "SHAPE_TYPE:PORT_NUMBER"
-    std::string data = shapeTypeToString(shapeType) + ":" + std::to_string(portNumber);
+//void Subscriber::subscribe(ShapeType shapeType, const std::string& publisherAddress) {
+//    flag = true;
+//
+//    // Start the thread to receive data
+//    std::thread receiveThread(&Subscriber::registerToPublisher, this);
+//    receiveThread.detach();
+//
+//    // Create the message string in the format "SHAPE_TYPE:PORT_NUMBER"
+//    std::string data = shapeTypeToString(shapeType) + ":" + std::to_string(portNumber);
+//
+//    // Loop until approved
+//    while (flag) {
+//        std::cout << "sending multicast" << std::endl;
+//        int iResult = sendto(sendSocketDescriptor, data.c_str(), data.size(), 0, reinterpret_cast<const sockaddr*>(&multicastSendingAddr), sizeof(multicastSendingAddr));
+//
+//        if (iResult == SOCKET_ERROR) {
+//            std::cout << "Sendto failed with error: <" << WSAGetLastError() << ">\n";
+//            closesocket(sendSocketDescriptor);
+//            WSACleanup();
+//        }
+//
+//        std::this_thread::sleep_for(std::chrono::seconds(4));
+//    }
+//}
 
-    // Loop until approved
-    while (flag) {
+
+//std::string Subscriber::shapeTypeToString(ShapeType shapeType) {
+//    switch (shapeType) {
+//    case ShapeType::CIRCLE:
+//        return "CIRCLE";
+//    case ShapeType::SQUARE:
+//        return "SQUARE";
+//    default:
+//        throw std::invalid_argument("Invalid shape type");
+//    }
+//}
+
+
+void Subscriber::registerToPublisher() {
+    std::string jsonString = serializeToJson();
+
+    while (true) {
         std::cout << "sending multicast" << std::endl;
-        int iResult = sendto(sendSocketDescriptor, data.c_str(), data.size(), 0, reinterpret_cast<const sockaddr*>(&multicastSendingAddr), sizeof(multicastSendingAddr));
+        int iResult = sendto(sendSocketDescriptor, jsonString.c_str(), jsonString.size(), 0, reinterpret_cast<const sockaddr*>(&multicastSendingAddr), sizeof(multicastSendingAddr));
 
         if (iResult == SOCKET_ERROR) {
             std::cout << "Sendto failed with error: <" << WSAGetLastError() << ">\n";
@@ -153,46 +212,26 @@ void Subscriber::subscribe(ShapeType shapeType, const std::string& publisherAddr
             WSACleanup();
         }
 
-        std::this_thread::sleep_for(std::chrono::seconds(4));
+        std::this_thread::sleep_for(std::chrono::seconds(5));
     }
 }
 
-
-std::string Subscriber::shapeTypeToString(ShapeType shapeType) {
-    switch (shapeType) {
-    case ShapeType::CIRCLE:
-        return "CIRCLE";
-    case ShapeType::SQUARE:
-        return "SQUARE";
-    default:
-        throw std::invalid_argument("Invalid shape type");
-    }
-}
-
-
-void Subscriber::registerToPublisher() {
-    char receiveData[1024];
-    sockaddr_in senderAddress;
-    int senderAddressSize = sizeof(senderAddress);
-
-    // Loop until registration is successful
-    while (flag) {
-        //int bytesReceived = recvfrom(recvSocketDescriptor, receiveData, sizeof(receiveData), 0, reinterpret_cast<sockaddr*>(&senderAddress), &senderAddressSize);
-        int bytesReceived = recvfrom(recvSocketDescriptor, receiveData, sizeof(receiveData), 0, reinterpret_cast<sockaddr*>(&senderAddress), &senderAddressSize);
-
-        if (bytesReceived != SOCKET_ERROR) {
-            // Print the received data
-            std::string receivedData(receiveData, bytesReceived);
-            std::cout << "Received registration data: " << receivedData << std::endl;
-
-            // Check if received "approved" message
-            if (receivedData == "approved") {
-                flag = false;
-                break;
-            }
-        }
-    }
-}
+//void Subscriber::receiveUnicastData() {
+//    char receiveData[1024];
+//    sockaddr_in senderAddress;
+//    int senderAddressSize = sizeof(senderAddress);
+//
+//    while (true) {
+//        int bytesReceived = recvfrom(unicastSocket, receiveData, sizeof(receiveData), 0, reinterpret_cast<sockaddr*>(&senderAddress), &senderAddressSize);
+//
+//        if (bytesReceived != SOCKET_ERROR) {
+//            // Print the received shape string
+//            std::string shapeString(receiveData, bytesReceived);
+//            std::cout << "subscriber: " << subscriberName << " get : " << shapeString << std::endl;
+//        }
+//    }
+//    closesocket(unicastSocket);
+//}
 
 void Subscriber::receiveUnicastData() {
     char receiveData[1024];
@@ -203,11 +242,39 @@ void Subscriber::receiveUnicastData() {
         int bytesReceived = recvfrom(unicastSocket, receiveData, sizeof(receiveData), 0, reinterpret_cast<sockaddr*>(&senderAddress), &senderAddressSize);
 
         if (bytesReceived != SOCKET_ERROR) {
-            // Print the received shape string
-            std::string shapeString(receiveData, bytesReceived);
-            std::cout << "subscriber: " << subscriberName << " get : " << shapeString << std::endl;
+            // Parse received JSON data
+            std::string jsonData(receiveData, bytesReceived);
+            auto parsedData = nlohmann::json::parse(jsonData);
+
+            // Extract and print shape type
+            std::string shapeType = parsedData["shapeType"];
+            std::cout <<subscriberName<< "recive: " <<std::endl;
+            std::cout << "Shape Type: " << shapeType << std::endl;
+
+            // Extract and print additional attributes
+            for (const auto& attribute : attributes) {
+                // Check if the attribute exists in the parsed JSON data
+                if (parsedData.find(attribute) != parsedData.end()) {
+                    std::cout << attribute << ": " << parsedData[attribute] << std::endl;
+                }
+            }
+
+            std::cout << "_______________________ " << std::endl;
         }
     }
     closesocket(unicastSocket);
 }
 
+std::string Subscriber::serializeToJson() const {
+    // Convert set of shapes to vector
+    std::vector<std::string> shapeTypesVector(subscribedShapes.begin(), subscribedShapes.end());
+
+    // Create JSON object
+    nlohmann::json jsonData;
+    jsonData["portNumber"] = portNumber;
+    jsonData["shapeTypes"] = shapeTypesVector;
+    jsonData["attributes"] = attributes;
+
+    // Serialize JSON to string
+    return jsonData.dump();
+}

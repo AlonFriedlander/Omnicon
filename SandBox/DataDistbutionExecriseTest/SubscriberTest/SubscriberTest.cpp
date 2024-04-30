@@ -1,19 +1,19 @@
 #include "Subscriber\Subscriber.h"
 
-int main()
+int main(int argc, char *argv[])
 {
-    Subscriber subscriber("ExampleSubscriber", 12345);
+    // Command line arguments:
+    // subscriberName: Specify a name for this test instance.
+    // portNumber: Enter a port number for this instance.
+    // shapeType: Choose the shape(s) you want to receive. Available options: SQUARE, CIRCLE, or both SQUARE:CIRCLE.
+    // attributes: Specify the attributes you want to receive. Available options: size, coordinates, colors.
 
-    subscriber.subscribe(Subscriber::ShapeType::SQUARE, "127.0.0.1");
+    // Convert command-line arguments to vector of strings, excluding the program name
+    std::vector<std::string> args(argv + 1, argv + argc);
 
-    std::this_thread::sleep_for(std::chrono::seconds(3));
+    // Pass the arguments as an array to the constructor of Subscriber
+    Subscriber subscriber(args);
 
-    subscriber.subscribe(Subscriber::ShapeType::CIRCLE, "127.0.0.1");
-
-    std::this_thread::sleep_for(std::chrono::seconds(3));
-
-    subscriber.subscribe(Subscriber::ShapeType::SQUARE, "127.0.0.1");
-
-    std::this_thread::sleep_for(std::chrono::seconds(500));
+    std::this_thread::sleep_for(std::chrono::seconds(50000));
     return 0;
 }
