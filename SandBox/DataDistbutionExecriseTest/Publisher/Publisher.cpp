@@ -15,10 +15,7 @@ Publisher::Publisher() : running(true) {
 
     createSockets();
 
-    functionMap["size"] = std::bind(&Publisher::generateSize, this);
-    functionMap["coordinates"] = std::bind(&Publisher::generateCoordinates, this);
-    functionMap["colors"] = std::bind(&Publisher::generateColors, this);
-
+    initializeFunctionMap();
 
     // Initialize list of subscribers
     initializeList();
@@ -31,61 +28,73 @@ Publisher::~Publisher() {
 }
 
 void Publisher::createSockets() {
-    // Create UDP socket
-    if ((multicastSocket = WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0)) == INVALID_SOCKET) {
-        WSACleanup();
-        throw std::runtime_error("Error creating socket");
-    }
+    multicastSocket = CommonSocketFunctions::createUdpSocket(true);
+
+    //// Create UDP socket
+    //if ((multicastSocket = WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0)) == INVALID_SOCKET) {
+    //    WSACleanup();
+    //    throw std::runtime_error("Error creating socket");
+    //}
+
+    CommonSocketFunctions::allowMultipleSocket(multicastSocket);
 
     // Allow multiple sockets to use the same PORT number
-    int yes = 1;
-    if (setsockopt(multicastSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&yes), sizeof(yes)) == SOCKET_ERROR) {
-        closesocket(multicastSocket);
-        WSACleanup();
-        throw std::runtime_error("Error setting socket options");
-    }
+    //int yes = 1;
+    //if (setsockopt(multicastSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&yes), sizeof(yes)) == SOCKET_ERROR) {
+    //    closesocket(multicastSocket);
+    //    WSACleanup();
+    //    throw std::runtime_error("Error setting socket options");
+    //}
 
-    multicastSendingAddr;
-    memset(&multicastSendingAddr, 0, sizeof(multicastSendingAddr));
-    multicastSendingAddr.sin_family = AF_INET;
-    inet_pton(AF_INET, (PCSTR)(multicastSendingGroup.c_str()), &multicastSendingAddr.sin_addr.s_addr);
-    multicastSendingAddr.sin_port = htons(multicastSendingPort);
+    //multicastSendingAddr;
+    //memset(&multicastSendingAddr, 0, sizeof(multicastSendingAddr));
+    //multicastSendingAddr.sin_family = AF_INET;
+    //inet_pton(AF_INET, (PCSTR)(multicastSendingGroup.c_str()), &multicastSendingAddr.sin_addr.s_addr);
+    //multicastSendingAddr.sin_port = htons(multicastSendingPort);
 
-    // Set up the address structure for binding
-    sockaddr_in serverAddress;
-    memset(&serverAddress, 0, sizeof(serverAddress));
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
-    serverAddress.sin_port = htons(multicastReceivingPort);
+    sockaddr_in serverAddress = CommonSocketFunctions::setUpUnicastAddressStructure(multicastReceivingPort);
 
-    // Bind the socket to the specified port
-    if (bind(multicastSocket, reinterpret_cast<const sockaddr*>(&serverAddress), sizeof(serverAddress)) == SOCKET_ERROR) {
-        closesocket(multicastSocket);
-        WSACleanup();
-        throw std::runtime_error("Error binding socket");
-    }
+    //Set up the address structure for binding
+    //sockaddr_in serverAddress;
+    //memset(&serverAddress, 0, sizeof(serverAddress));
+    //serverAddress.sin_family = AF_INET;
+    //serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
+    //serverAddress.sin_port = htons(multicastReceivingPort);
+
+    CommonSocketFunctions::bindSocket(multicastSocket, serverAddress);
+
+    //// Bind the socket to the specified port
+    //if (bind(multicastSocket, reinterpret_cast<const sockaddr*>(&serverAddress), sizeof(serverAddress)) == SOCKET_ERROR) {
+    //    closesocket(multicastSocket);
+    //    WSACleanup();
+    //    throw std::runtime_error("Error binding socket");
+    //}
+
+    CommonSocketFunctions::joinMulticastGroup(multicastSocket, multicastReceivingGroup); 
 
     // Join the multicast group
-    ip_mreq multicastRequest;
-    inet_pton(AF_INET, (PCSTR)(multicastReceivingGroup.c_str()), &multicastRequest.imr_multiaddr.s_addr);
-    multicastRequest.imr_interface.s_addr = htonl(INADDR_ANY);
-    if (setsockopt(multicastSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, reinterpret_cast<const char*>(&multicastRequest), sizeof(multicastRequest)) == SOCKET_ERROR) {
-        closesocket(multicastSocket);
-        WSACleanup();
-        throw std::runtime_error("Error joining multicast group");
-    }
+    //ip_mreq multicastRequest;
+    //inet_pton(AF_INET, (PCSTR)(multicastReceivingGroup.c_str()), &multicastRequest.imr_multiaddr.s_addr);
+    //multicastRequest.imr_interface.s_addr = htonl(INADDR_ANY);
+    //if (setsockopt(multicastSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, reinterpret_cast<const char*>(&multicastRequest), sizeof(multicastRequest)) == SOCKET_ERROR) {
+    //    closesocket(multicastSocket);
+    //    WSACleanup();
+    //    throw std::runtime_error("Error joining multicast group");
+    //}
+
+    unicastSocket = CommonSocketFunctions::createUdpSocket(false);
 
     // Create UDP socket
-    if ((unicastSocket = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
-        WSACleanup();
-        throw std::runtime_error("Error creating socket");
-    }
+    //if ((unicastSocket = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
+    //    WSACleanup();
+    //    throw std::runtime_error("Error creating socket");
+    //}
     
-    // Create UDP socket
-    if ((sendApprovedSocket = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
-        WSACleanup();
-        throw std::runtime_error("Error creating socket");
-    }
+    //// Create UDP socket
+    //if ((sendApprovedSocket = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
+    //    WSACleanup();
+    //    throw std::runtime_error("Error creating socket");
+    //}
 }
 
 // Starts the publishing process
@@ -93,8 +102,8 @@ void Publisher::startPublishing() {
     std::thread listenerThread(&Publisher::subscriberRegistrar, this);
     std::thread eventManagerThread(&Publisher::eventManager, this);
 
-    listenerThread.detach();
-    eventManagerThread.detach();
+    listenerThread.join();
+    eventManagerThread.join();
 }
 
 // Stops the publishing process
@@ -117,6 +126,12 @@ void Publisher::initializeList() {
         // Insert a pointer to the subscriber shape object into the map
         map.insert(std::make_pair(shapeTypeToString(shapeType), subscriberShapePtr));
     }
+}
+
+void Publisher::initializeFunctionMap() {
+    functionMap["size"] = std::bind(&Publisher::generateSize, this);
+    functionMap["coordinates"] = std::bind(&Publisher::generateCoordinates, this);
+    functionMap["colors"] = std::bind(&Publisher::generateColors, this);
 }
 
 //Gets the frequency for a given shape type
@@ -273,19 +288,19 @@ std::string Publisher::generateColors() {
 
 
 // Generates a random shape based on the given shape type
-Shape* Publisher::generateShape(std::string& shapeType) {
-    int size = (rand() % 100) + 1; // Random size between 1 and 100
-    std::vector<int> coordinates(3);
-    for (int i = 0; i < 3; ++i) {
-        coordinates[i] = rand() % 1500; // Random coordinate
-    }
-    if (shapeType == "SQUARE") {
-        return new Square(size, coordinates);
-    }
-    else {
-        return new Circle(size, coordinates);
-    }
-}
+//Shape* Publisher::generateShape(std::string& shapeType) {
+//    int size = (rand() % 100) + 1; // Random size between 1 and 100
+//    std::vector<int> coordinates(3);
+//    for (int i = 0; i < 3; ++i) {
+//        coordinates[i] = rand() % 1500; // Random coordinate
+//    }
+//    if (shapeType == "SQUARE") {
+//        return new Square(size, coordinates);
+//    }
+//    else {
+//        return new Circle(size, coordinates);
+//    }
+//}
 
 //Sends a string representation of a shape to a subscriber
 void Publisher::sendShapeString(const std::string& shapeString, const SendingInfo& sendingInfo) {
@@ -363,7 +378,6 @@ void Publisher::subscriberRegistrar() {
                 }
                 else {
                     // Handle case when shape type is not found in map
-                    // For example, log an error or ignore it
                 }
             }
         }

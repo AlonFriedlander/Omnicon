@@ -4,7 +4,6 @@ std::string multicastSendingGroup = "234.5.6.7";
 int multicastSendingPort = 8910;
 
 Subscriber::Subscriber(const std::vector<std::string>& args){
-
     subscriberName = args[0];
     portNumber = std::stoi(args[1]);
     
@@ -38,27 +37,33 @@ Subscriber::~Subscriber() {
 }
 
 void Subscriber::createSockets() {
-    //Create a UDP socket for sending multicast
-    sendSocketDescriptor = WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0);
-    if (sendSocketDescriptor == INVALID_SOCKET) {
-        WSACleanup();
-        throw std::runtime_error("Error creating socket");
-    }
+
+    sendSocketDescriptor = CommonSocketFunctions::createUdpSocket(true);
+    ////Create a UDP socket for sending multicast
+    //sendSocketDescriptor = WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0);
+    //if (sendSocketDescriptor == INVALID_SOCKET) {
+    //    WSACleanup();
+    //    throw std::runtime_error("Error creating socket");
+    //}
+
+    CommonSocketFunctions::allowMultipleSocket(sendSocketDescriptor);
 
     // Allow multiple sockets to use the same PORT number
-    int optval = 1;
-    if ((setsockopt(sendSocketDescriptor, SOL_SOCKET, SO_REUSEADDR, (char*)&optval, sizeof(optval))) < 0)
-    {
-        closesocket(sendSocketDescriptor);
-        WSACleanup();
-        throw std::runtime_error("Error setting socket options");
-    }
+    //int optval = 1;
+    //if ((setsockopt(sendSocketDescriptor, SOL_SOCKET, SO_REUSEADDR, (char*)&optval, sizeof(optval))) < 0)
+    //{
+    //    closesocket(sendSocketDescriptor);
+    //    WSACleanup();
+    //    throw std::runtime_error("Error setting socket options");
+    //}
 
-    multicastSendingAddr;
-    memset(&multicastSendingAddr, 0, sizeof(multicastSendingAddr));
-    multicastSendingAddr.sin_family = AF_INET;
-    inet_pton(AF_INET, (PCSTR)(multicastSendingGroup.c_str()), &multicastSendingAddr.sin_addr.s_addr);
-    multicastSendingAddr.sin_port = htons(multicastSendingPort);
+    multicastSendingAddr = CommonSocketFunctions::setUpAddressStructure(multicastSendingGroup, multicastSendingPort);
+
+    //multicastSendingAddr;
+    //memset(&multicastSendingAddr, 0, sizeof(multicastSendingAddr));
+    //multicastSendingAddr.sin_family = AF_INET;
+    //inet_pton(AF_INET, (PCSTR)(multicastSendingGroup.c_str()), &multicastSendingAddr.sin_addr.s_addr);
+    //multicastSendingAddr.sin_port = htons(multicastSendingPort);
 
     //................................................
     //// Create UDP socket for recive multicast
@@ -100,43 +105,32 @@ void Subscriber::createSockets() {
 
     //................................................
     // Create a socket for receiving unicast UDP
-    unicastSocket = socket(AF_INET, SOCK_DGRAM, 0);
-    if (unicastSocket == INVALID_SOCKET) {
-        std::cerr << "Error creating unicast socket: " << WSAGetLastError() << std::endl;
-        return;
-    }
+    unicastSocket = CommonSocketFunctions::createUdpSocket(false);
+
+    //unicastSocket = socket(AF_INET, SOCK_DGRAM, 0);
+    //if (unicastSocket == INVALID_SOCKET) {
+    //    std::cerr << "Error creating unicast socket: " << WSAGetLastError() << std::endl;
+    //    return;
+    //}
+
+
+    sockaddr_in serverHint = CommonSocketFunctions::setUpUnicastAddressStructure(portNumber);
 
     // Create a server hint structure for the server
-    sockaddr_in serverHint;
-    serverHint.sin_addr.S_un.S_addr = ADDR_ANY; // Us any IP address available on the machine
-    serverHint.sin_family = AF_INET; // Address format is IPv4
-    serverHint.sin_port = htons(portNumber); // Convert from little to big endian
+    //sockaddr_in serverHint;
+    //serverHint.sin_addr.S_un.S_addr = ADDR_ANY; // Us any IP address available on the machine
+    //serverHint.sin_family = AF_INET; // Address format is IPv4
+    //serverHint.sin_port = htons(portNumber); // Convert from little to big endian
+
+    CommonSocketFunctions::bindSocket(unicastSocket, serverHint);
 
     //Try and bind the socket to the IP and port
-    if (bind(unicastSocket, (sockaddr*)&serverHint, sizeof(serverHint)) == SOCKET_ERROR)
-    {
-        std::cout << "Can't bind socket! " << WSAGetLastError() << std::endl;
-        return;
-    }
+    //if (bind(unicastSocket, (sockaddr*)&serverHint, sizeof(serverHint)) == SOCKET_ERROR)
+    //{
+    //    std::cout << "Can't bind socket! " << WSAGetLastError() << std::endl;
+    //    return;
+    //}
 
-    recvSocketDescriptor = socket(AF_INET, SOCK_DGRAM, 0);
-    if (recvSocketDescriptor == INVALID_SOCKET) {
-        std::cerr << "Error creating unicast socket: " << WSAGetLastError() << std::endl;
-        return;
-    }
-
-    // Create a server hint structure for the server
-    sockaddr_in serverHint2;
-    serverHint2.sin_addr.S_un.S_addr = ADDR_ANY; // Us any IP address available on the machine
-    serverHint2.sin_family = AF_INET; // Address format is IPv4
-    serverHint2.sin_port = htons(portNumber + 1); // Convert from little to big endian
-
-    //Try and bind the socket to the IP and port
-    if (bind(recvSocketDescriptor, (sockaddr*)&serverHint2, sizeof(serverHint2)) == SOCKET_ERROR)
-    {
-        std::cout << "Can't bind socket!!!!! " << WSAGetLastError() << std::endl;
-        return;
-    }
 }
 
 void Subscriber::parseShapes(const std::string& shapeType) {
@@ -246,10 +240,9 @@ void Subscriber::receiveUnicastData() {
             std::string jsonData(receiveData, bytesReceived);
             auto parsedData = nlohmann::json::parse(jsonData);
 
-            // Extract and print shape type
-            std::string shapeType = parsedData["shapeType"];
+            // Extract and print shape type and subscriber name
             std::cout <<subscriberName<< "recive: " <<std::endl;
-            std::cout << "Shape Type: " << shapeType << std::endl;
+            std::cout << "Shape Type: " << parsedData["shapeType"] << std::endl;
 
             // Extract and print additional attributes
             for (const auto& attribute : attributes) {
@@ -258,7 +251,6 @@ void Subscriber::receiveUnicastData() {
                     std::cout << attribute << ": " << parsedData[attribute] << std::endl;
                 }
             }
-
             std::cout << "_______________________ " << std::endl;
         }
     }

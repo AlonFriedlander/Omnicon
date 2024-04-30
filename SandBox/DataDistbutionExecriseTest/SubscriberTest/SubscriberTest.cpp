@@ -2,7 +2,8 @@
 
 int main(int argc, char *argv[])
 {
-    // Command line arguments:
+    // Command line arguments: subscriberName portNumber shapeType attributes
+    
     // subscriberName: Specify a name for this test instance.
     // portNumber: Enter a port number for this instance.
     // shapeType: Choose the shape(s) you want to receive. Available options: SQUARE, CIRCLE, or both SQUARE:CIRCLE.

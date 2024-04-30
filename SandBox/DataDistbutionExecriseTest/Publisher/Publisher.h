@@ -75,6 +75,8 @@ private:
     void circleHandler();
     void squareHandler(); 
     void generateShapeJson(nlohmann::json& shapeJson);
+    void initializeFunctionMap(); 
+
 
 
     void createSockets();
