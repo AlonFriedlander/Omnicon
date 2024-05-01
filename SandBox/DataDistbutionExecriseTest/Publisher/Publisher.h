@@ -100,7 +100,6 @@ private:
 
     // Define the map with function pointers
     std::map<std::string, FunctionPtr> functionMap;
-
     std::set<int> registeredPortNumbers; // Set to store registered port numbers
 };
 

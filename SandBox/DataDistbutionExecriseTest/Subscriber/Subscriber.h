@@ -31,6 +31,7 @@ public:
 
     Subscriber(const std::vector<std::string>& args);
     ~Subscriber();
+    void stopPublishing();
 
     void subscribe(ShapeType shapeType, const std::string& publisherAddress);
 
@@ -42,6 +43,7 @@ private:
     
     int portNumber;
     bool flag = true;
+    bool running;
     std::set<std::string> subscribedShapes;
     std::vector<std::string> attributes;
 

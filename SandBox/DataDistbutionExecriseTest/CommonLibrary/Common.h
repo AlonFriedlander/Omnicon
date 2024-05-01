@@ -10,6 +10,8 @@ class CommonSocketFunctions {
 public:
     static SOCKET createUdpSocket(bool isMulticast);
     static void allowMultipleSocket(SOCKET socket);
+    static void setSocketOptions(SOCKET socket, bool reuseAddress, DWORD receiveTimeout);
+
     static sockaddr_in setUpAddressStructure(const std::string& ipAddress, int port);
     static sockaddr_in setUpUnicastAddressStructure(int port); 
     static void bindSocket(SOCKET socket, const sockaddr_in& address);

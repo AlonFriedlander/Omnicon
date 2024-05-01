@@ -8,7 +8,7 @@ void addition(int a, int b)
 SOCKET CommonSocketFunctions::createUdpSocket(bool isMulticast) {
     SOCKET newSocket;
     if (isMulticast) {
-        newSocket = WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0);
+        newSocket = WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, WSA_FLAG_OVERLAPPED);
     }
     else {
         newSocket = socket(AF_INET, SOCK_DGRAM, 0);
@@ -20,14 +20,43 @@ SOCKET CommonSocketFunctions::createUdpSocket(bool isMulticast) {
     return newSocket;
 }
 
-void CommonSocketFunctions::allowMultipleSocket(SOCKET socket) {
-    int yes = 1;
-    if (setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&yes), sizeof(yes)) == SOCKET_ERROR) {
-        closesocket(socket);
-        WSACleanup();
-        throw std::runtime_error("Error setting socket options");
+void CommonSocketFunctions::setSocketOptions(SOCKET socket, bool reuseAddress, DWORD receiveTimeout) {
+    if (reuseAddress) {
+        int yes = 1;
+        if (setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&yes), sizeof(yes)) == SOCKET_ERROR) {
+            closesocket(socket);
+            WSACleanup();
+            throw std::runtime_error("Error setting socket options");
+        }
     }
+
+    // Set receive timeout if receiveTimeout is greater than 0
+    if (receiveTimeout > 0) {
+        if (setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&receiveTimeout), sizeof(receiveTimeout)) == SOCKET_ERROR) {
+            closesocket(socket);
+            WSACleanup();
+            throw std::runtime_error("Error setting receive timeout");
+        }
+    }
+
+    //// Set WSA_FLAG_OVERLAPPED flag if socket is created with WSASocket
+    //DWORD flags = 0;
+    //int flagsSize = sizeof(flags); // Correct size type for getsockopt
+    //if (getsockopt(socket, SOL_SOCKET, SO_TYPE, reinterpret_cast<char*>(&flags), &flagsSize) == 0) {
+    //    if (flags & WSA_FLAG_OVERLAPPED) {
+    //        return; // Already has WSA_FLAG_OVERLAPPED flag set
+    //    }
+    //}
+
+    //// Add WSA_FLAG_OVERLAPPED flag
+    //flags |= WSA_FLAG_OVERLAPPED;
+    //if (setsockopt(socket, SOL_SOCKET, SO_TYPE, reinterpret_cast<const char*>(&flags), sizeof(flags)) == SOCKET_ERROR) {
+    //    closesocket(socket);
+    //    WSACleanup();
+    //    throw std::runtime_error("Error setting WSA_FLAG_OVERLAPPED flag");
+    //}
 }
+
 
 sockaddr_in CommonSocketFunctions::setUpAddressStructure(const std::string& ipAddress, int port) {
     sockaddr_in address;

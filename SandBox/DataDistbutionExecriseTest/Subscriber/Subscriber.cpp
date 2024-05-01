@@ -3,7 +3,7 @@
 std::string multicastSendingGroup = "234.5.6.7";
 int multicastSendingPort = 8910;
 
-Subscriber::Subscriber(const std::vector<std::string>& args){
+Subscriber::Subscriber(const std::vector<std::string>& args): running(true) {
     subscriberName = args[0];
     portNumber = std::stoi(args[1]);
     
@@ -22,9 +22,9 @@ Subscriber::Subscriber(const std::vector<std::string>& args){
     createSockets();
 
     std::thread receiveThread(&Subscriber::receiveUnicastData, this);
-    receiveThread.detach();
-    
     std::thread receiveThread2(&Subscriber::registerToPublisher, this);
+    
+    receiveThread.detach();
     receiveThread2.detach();
 }
 
@@ -34,6 +34,14 @@ Subscriber::~Subscriber() {
     closesocket(recvSocketDescriptor);
     closesocket(unicastSocket);
     WSACleanup();
+}
+
+// Stops the subscriber 
+void Subscriber::stopPublishing() {
+    std::cout << "stop subscribing" << std::endl;
+    running = false;
+    closesocket(sendSocketDescriptor);
+    closesocket(unicastSocket);
 }
 
 void Subscriber::createSockets() {
@@ -46,7 +54,8 @@ void Subscriber::createSockets() {
     //    throw std::runtime_error("Error creating socket");
     //}
 
-    CommonSocketFunctions::allowMultipleSocket(sendSocketDescriptor);
+    CommonSocketFunctions::setSocketOptions(sendSocketDescriptor, true, 0);
+    //CommonSocketFunctions::allowMultipleSocket(sendSocketDescriptor);
 
     // Allow multiple sockets to use the same PORT number
     //int optval = 1;
@@ -196,7 +205,7 @@ void Subscriber::createAttributes(const std::vector<std::string>& args) {
 void Subscriber::registerToPublisher() {
     std::string jsonString = serializeToJson();
 
-    while (true) {
+    while (running) {
         std::cout << "sending multicast" << std::endl;
         int iResult = sendto(sendSocketDescriptor, jsonString.c_str(), jsonString.size(), 0, reinterpret_cast<const sockaddr*>(&multicastSendingAddr), sizeof(multicastSendingAddr));
 
@@ -232,7 +241,7 @@ void Subscriber::receiveUnicastData() {
     sockaddr_in senderAddress;
     int senderAddressSize = sizeof(senderAddress);
 
-    while (true) {
+    while (running) {
         int bytesReceived = recvfrom(unicastSocket, receiveData, sizeof(receiveData), 0, reinterpret_cast<sockaddr*>(&senderAddress), &senderAddressSize);
 
         if (bytesReceived != SOCKET_ERROR) {
@@ -241,7 +250,7 @@ void Subscriber::receiveUnicastData() {
             auto parsedData = nlohmann::json::parse(jsonData);
 
             // Extract and print shape type and subscriber name
-            std::cout <<subscriberName<< "recive: " <<std::endl;
+            std::cout <<subscriberName<< " recive: " <<std::endl;
             std::cout << "Shape Type: " << parsedData["shapeType"] << std::endl;
 
             // Extract and print additional attributes
@@ -265,7 +274,6 @@ std::string Subscriber::serializeToJson() const {
     nlohmann::json jsonData;
     jsonData["portNumber"] = portNumber;
     jsonData["shapeTypes"] = shapeTypesVector;
-    jsonData["attributes"] = attributes;
 
     // Serialize JSON to string
     return jsonData.dump();

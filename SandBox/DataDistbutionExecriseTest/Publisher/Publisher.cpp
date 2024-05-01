@@ -1,9 +1,7 @@
 #include "Publisher.h"
 
 std::string multicastReceivingGroup = "234.5.6.7";
-std::string multicastSendingGroup = "234.5.6.8";
 int multicastReceivingPort = 8910;
-int multicastSendingPort = 8911;
 
 // Constructor
 Publisher::Publisher() : running(true) {
@@ -16,7 +14,6 @@ Publisher::Publisher() : running(true) {
     createSockets();
 
     initializeFunctionMap();
-
     // Initialize list of subscribers
     initializeList();
 }
@@ -29,85 +26,26 @@ Publisher::~Publisher() {
 
 void Publisher::createSockets() {
     multicastSocket = CommonSocketFunctions::createUdpSocket(true);
-
-    //// Create UDP socket
-    //if ((multicastSocket = WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0)) == INVALID_SOCKET) {
-    //    WSACleanup();
-    //    throw std::runtime_error("Error creating socket");
-    //}
-
-    CommonSocketFunctions::allowMultipleSocket(multicastSocket);
-
-    // Allow multiple sockets to use the same PORT number
-    //int yes = 1;
-    //if (setsockopt(multicastSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&yes), sizeof(yes)) == SOCKET_ERROR) {
-    //    closesocket(multicastSocket);
-    //    WSACleanup();
-    //    throw std::runtime_error("Error setting socket options");
-    //}
-
-    //multicastSendingAddr;
-    //memset(&multicastSendingAddr, 0, sizeof(multicastSendingAddr));
-    //multicastSendingAddr.sin_family = AF_INET;
-    //inet_pton(AF_INET, (PCSTR)(multicastSendingGroup.c_str()), &multicastSendingAddr.sin_addr.s_addr);
-    //multicastSendingAddr.sin_port = htons(multicastSendingPort);
-
+    CommonSocketFunctions::setSocketOptions(multicastSocket, true, 2000);
     sockaddr_in serverAddress = CommonSocketFunctions::setUpUnicastAddressStructure(multicastReceivingPort);
-
-    //Set up the address structure for binding
-    //sockaddr_in serverAddress;
-    //memset(&serverAddress, 0, sizeof(serverAddress));
-    //serverAddress.sin_family = AF_INET;
-    //serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
-    //serverAddress.sin_port = htons(multicastReceivingPort);
-
     CommonSocketFunctions::bindSocket(multicastSocket, serverAddress);
-
-    //// Bind the socket to the specified port
-    //if (bind(multicastSocket, reinterpret_cast<const sockaddr*>(&serverAddress), sizeof(serverAddress)) == SOCKET_ERROR) {
-    //    closesocket(multicastSocket);
-    //    WSACleanup();
-    //    throw std::runtime_error("Error binding socket");
-    //}
-
-    CommonSocketFunctions::joinMulticastGroup(multicastSocket, multicastReceivingGroup); 
-
-    // Join the multicast group
-    //ip_mreq multicastRequest;
-    //inet_pton(AF_INET, (PCSTR)(multicastReceivingGroup.c_str()), &multicastRequest.imr_multiaddr.s_addr);
-    //multicastRequest.imr_interface.s_addr = htonl(INADDR_ANY);
-    //if (setsockopt(multicastSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, reinterpret_cast<const char*>(&multicastRequest), sizeof(multicastRequest)) == SOCKET_ERROR) {
-    //    closesocket(multicastSocket);
-    //    WSACleanup();
-    //    throw std::runtime_error("Error joining multicast group");
-    //}
+    CommonSocketFunctions::joinMulticastGroup(multicastSocket, multicastReceivingGroup);
 
     unicastSocket = CommonSocketFunctions::createUdpSocket(false);
-
-    // Create UDP socket
-    //if ((unicastSocket = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
-    //    WSACleanup();
-    //    throw std::runtime_error("Error creating socket");
-    //}
-    
-    //// Create UDP socket
-    //if ((sendApprovedSocket = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
-    //    WSACleanup();
-    //    throw std::runtime_error("Error creating socket");
-    //}
 }
 
-// Starts the publishing process
+//// Starts the publishing process
 void Publisher::startPublishing() {
     std::thread listenerThread(&Publisher::subscriberRegistrar, this);
     std::thread eventManagerThread(&Publisher::eventManager, this);
 
-    listenerThread.join();
-    eventManagerThread.join();
+    listenerThread.detach();
+    eventManagerThread.detach();
 }
 
 // Stops the publishing process
 void Publisher::stopPublishing() {
+    std::cout << "stop publishing" << std::endl;
     running = false;
     closesocket(multicastSocket);
     closesocket(unicastSocket);
@@ -158,8 +96,8 @@ void Publisher::eventManager() {
     // Create a thread for handling squares
     std::thread squareThread(&Publisher::squareHandler, this);
 
-     circleThread.join();
-     squareThread.join();
+     circleThread.detach();
+     squareThread.detach();
 }
 
 // Function to handle circles
@@ -190,6 +128,7 @@ void Publisher::circleHandler() {
 
 // Function to handle squares
 void Publisher::squareHandler() {
+
     // Create a JSON object
     nlohmann::json squareJson;
 
